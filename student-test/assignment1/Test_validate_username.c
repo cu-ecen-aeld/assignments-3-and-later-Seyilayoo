@@ -17,6 +17,22 @@ void test_validate_my_username()
     /**
      * TODO: Replace the line below with your code here as described above to verify your /conf/username.txt 
      * config file and my_username() functions are setup properly
+     *This function tests if the username retrieved from the config file matches the
+     * username retrieved from the `my_username` function in `autotest-validate.c`.
      */
-    TEST_ASSERT_TRUE_MESSAGE(false,"AESD students, please fix me!");
+
+  char *usrnme_file = malloc_username_from_conf_file();
+  char *usrnme_func = my_username();
+
+  // Check if memory allocation for username_from_file was successful
+  TEST_ASSERT_NOT_NULL_MESSAGE(usrnme_file, "Failed to allocate memory for username from file");
+
+  // Verify if both usernames are equal
+  TEST_ASSERT_EQUAL_STRING_MESSAGE(usrnme_file, usrnme_func, "Usernames don't match!");
+
+  // Free the allocated memory (important to avoid memory leaks)
+  free(usrnme_file);
+  
+  
+ // TEST_ASSERT_TRUE_MESSAGE(false,"AESD students, please fix me!");
 }
