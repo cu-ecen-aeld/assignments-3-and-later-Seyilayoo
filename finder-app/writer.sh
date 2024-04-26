@@ -1,16 +1,24 @@
 #!/bin/bash
 
-# Check for required arguments
+write_to_file() {
+  local writefile="$1"
+  local writestr="$2"
+
+  if ! [ -f "$writefile" ]; then
+    # Create directories and file if needed
+    mkdir -p "$(dirname "$writefile")" && touch "$writefile"
+  fi
+
+  # Write the string to the file
+  echo "$writestr" > "$writefile"
+}
+
+# Main script execution
 if [ $# -ne 2 ]; then
-  echo "Error: Please provide two arguments: file path and string to write."
+  echo "Error: Please provide exactly two arguments: file path and string to write."
   exit 1
 fi
 
-# Define variables
-writefile="$1"
-writestr="$2"
+write_to_file "$1" "$2"
 
-# Create the file and write content
-touch "$writefile" && echo "$writestr" > "$writefile" && echo "File created successfully!" || echo "Error: Could not create file."
-
-exit 0
+exit $?
