@@ -25,6 +25,6 @@ void test_validate_my_username()
   const char *usrnme_func = my_username();
 
 
-  TEST_ASSERT_EQUAL_STRING_MESSAGE(usrnme_func, usrnme_file, "Error message !!"); 
+  TEST_ASSERT_EQUAL_STRING_MESSAGE(usrnme_func, usrnme_file, "Error!"); 
  // TEST_ASSERT_TRUE_MESSAGE(false,"AESD students, please fix me!");
 }
