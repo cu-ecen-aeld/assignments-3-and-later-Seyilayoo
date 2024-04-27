@@ -15,7 +15,10 @@
 bool do_system(const char *cmd)
 {
 
-    return true;
+     int result = system(cmd);
+  // Check the return value of system()
+  return result != -1;
+
 }
 
 /*
@@ -43,6 +46,7 @@ bool do_system(const char *cmd)
 
 bool do_exec(int count, ...)
 {
+   // bool result = false;
     va_list args;
     va_start(args, count);
     char * command[count+1];
@@ -53,7 +57,7 @@ bool do_exec(int count, ...)
     }
     command[count] = NULL;
     
-    pid_t pid = fork();
+     pid_t pid = fork();
 
   if (pid == -1) {
     // Error handling for fork failure
@@ -77,6 +81,8 @@ bool do_exec(int count, ...)
 
 
 
+
+
 /*
  * TODO: done!
  *   Execute a system command by calling fork, execv(),
@@ -96,17 +102,18 @@ bool do_exec(int count, ...)
 */
 bool do_exec_redirect(const char *outputfile, int count, ...)
 {
+    //bool result = false;
     va_list args;
     va_start(args, count);
     char * command[count+1];
-    int i;
+    int i = 0;
     for(i=0; i<count; i++)
     {
         command[i] = va_arg(args, char *);
     }
     command[count] = NULL;
     
-    int fd = open(outputfile, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+     int fd = open(outputfile, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
   if (fd == -1) {
     perror("open");
     va_end(args);
@@ -123,14 +130,13 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     return false;
   } else if (pid == 0) {
     // Child process
-
     // Duplicate stdout file descriptor to file descriptor 1 (standard output)
     dup2(fd, 1);
     close(fd);  // Close original file descriptor (not needed anymore)
 
     execv(command[0], command);
     perror("execv");
-    exit(1);
+    exit(1);  // Indicate error in child process
   } else {
     // Parent process
     close(fd);  // Close the file descriptor in the parent process
@@ -138,8 +144,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     waitpid(pid, &status, 0);
     va_end(args);
     return WIFEXITED(status) && WEXITSTATUS(status) == 0;
-  }
-}
+  }}
 
 
 /*
