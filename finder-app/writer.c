@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <syslog.h>
-//#include <fcnt1.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #define LOG_FACILITY LOG_USER
 
@@ -14,26 +15,27 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  // Open the file for writing
-  FILE *fp = fopen(argv[2], "w");
-  if (fp == NULL) {
+  // Open the file for writing 
+  int fd = creat(argv[1], 0644);  // creat opens for writing, truncates
+  if (fd == -1) {
     syslog(LOG_ERR, "Error opening file: %s", strerror(errno));
     return 1;
   }
 
   // Write the string to the file
-  size_t written = fwrite(argv[1], sizeof(char), strlen(argv[1]), fp);
-  if (written != strlen(argv[1])) {
+  size_t written = write(fd, argv[2], strlen(argv[2]));
+  if (written != strlen(argv[2])) {
     syslog(LOG_ERR, "Error writing to file");
-    fclose(fp);
+    close(fd);
     return 1;
   }
 
   // Log successful write
-  syslog(LOG_DEBUG, "Writing %s to %s", argv[1], argv[2]);
+  syslog(LOG_DEBUG, "Writing %s to %s", argv[2], argv[1]);
 
   // Close the file
-  fclose(fp);
+  close(fd);
 
   return 0;
 }
+
